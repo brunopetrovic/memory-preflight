@@ -49,4 +49,4 @@ jobs:
       - name: CLI smoke test
         run: |
           pip install -e .
-          memory-preflight classify --tool terminal --args '{"command": "ls"}' | python -m json.tool --quiet && echo "CLI OK"
+          memory-preflight classify --tool terminal --args '{"command": "ls"}' | python -c "import sys, json; json.load(sys.stdin); print('CLI OK')"
