@@ -15,6 +15,10 @@ from memory_preflight import (
 )
 
 
+FAKE_OPENAI_KEY = "sk-" + "1" * 24
+FAKE_GITHUB_PAT = "ghp_" + "A" * 36
+FAKE_BEARER_TOKEN = "eyJ" + "B" * 37
+
 class TestMemoryPreflightDecision:
     """Tests for the memory preflight decision module."""
 
@@ -503,35 +507,34 @@ class TestMemoryAdvisoryIntegration:
     def test_text_preview_redacts_openai_sk_key(self) -> None:
         advisory = build_memory_preflight_advisory(
             "terminal",
-            {"command": "curl https://api.openai.com/v1 -H 'Authorization: Bearer sk-liveAbCdEfGhIjKlMnOpQrStUvWx1234567890'"},
+            {"command": "curl https://api.openai.com/v1 -H 'Authorization: Bearer " + FAKE_OPENAI_KEY + "'"},
         )
-        assert "sk-liveAbCdEfGhIjKlMnOpQrStUvWx1234567890" not in advisory._text_preview
+        assert FAKE_OPENAI_KEY not in advisory._text_preview
         assert "***" in advisory._text_preview
         assert "credentials" in advisory.categories
 
     def test_text_preview_redacts_github_pat(self) -> None:
         advisory = build_memory_preflight_advisory(
             "terminal",
-            {"command": "export GHP_TOKEN=ghp_abcdefghijklmnopqrstuvwxyz1234567890"},
+            {"command": "export GHP_TOKEN=" + FAKE_GITHUB_PAT},
         )
-        assert "ghp_abcdefghijklmnopqrstuvwxyz1234567890" not in advisory._text_preview
+        assert FAKE_GITHUB_PAT not in advisory._text_preview
         assert "credentials" in advisory.categories
 
     def test_text_preview_redacts_api_key_eq_value(self) -> None:
         advisory = build_memory_preflight_advisory(
             "terminal",
-            {"command": "export API_KEY=sk-liveAbCdEfGhIjKlMnOpQrStUvWx1234567890"},
+            {"command": "export API_KEY=" + FAKE_OPENAI_KEY},
         )
-        assert "sk-liveAbCdEfGhIjKlMnOpQrStUvWx1234567890" not in advisory._text_preview
+        assert FAKE_OPENAI_KEY not in advisory._text_preview
         assert "credentials" in advisory.categories
 
     def test_text_preview_redacts_bearer_token(self) -> None:
         advisory = build_memory_preflight_advisory(
             "terminal",
-            {"command": "curl -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'"},
+            {"command": "curl -H 'Authorization: Bearer " + FAKE_BEARER_TOKEN + "'"},
         )
-        raw_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-        assert raw_token not in advisory._text_preview
+        assert FAKE_BEARER_TOKEN not in advisory._text_preview
         assert "***" in advisory._text_preview
 
     def test_text_preview_does_not_redact_short_values(self) -> None:
@@ -544,10 +547,10 @@ class TestMemoryAdvisoryIntegration:
     def test_classification_still_uses_raw_text_not_redacted(self) -> None:
         advisory = build_memory_preflight_advisory(
             "terminal",
-            {"command": "set API_KEY=sk-liveAbCdEfGhIjKlMnOpQrStUvWx1234567890"},
+            {"command": "set API_KEY=" + FAKE_OPENAI_KEY},
         )
         assert "credentials" in advisory.categories
-        assert "sk-liveAbCdEfGhIjKlMnOpQrStUvWx1234567890" not in advisory._text_preview
+        assert FAKE_OPENAI_KEY not in advisory._text_preview
 
 
 class TestDelegateTaskGoalContextExtraction:
