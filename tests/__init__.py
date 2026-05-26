@@ -1,0 +1,1 @@
+# Tests for CLI smoke tests — run as part of CI lint job

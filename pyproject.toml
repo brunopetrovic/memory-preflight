@@ -1,0 +1,44 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "memory-preflight"
+version = "0.1.0"
+description = "Deterministically classify tool and memory risk before an agent loads context or executes tools."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [
+    { name = "Bruno Petrovic", email = "brunopetrovic@users.noreply.github.com" }
+]
+keywords = ["memory", "governance", "risk-classification", "preflight", "agent-safety"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+
+[project.scripts]
+memory-preflight = "memory_preflight.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/memory_preflight"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
